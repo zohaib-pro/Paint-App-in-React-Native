@@ -10,7 +10,7 @@ import Stack from './utils/Stack';
 import Slider from '@react-native-community/slider';
 import Space from './components/Space';
 
-export default function App() {
+export default function App({ customFunction }) {
   const viewRef = useRef(null);
   const canvasRef = useRef(null);
   const isDrawingRef = useRef(false);
@@ -123,6 +123,9 @@ export default function App() {
       canvasRef.current.width = width;
       canvasRef.current.height = height;
     }
+    // Call the custom function when the component mounts
+    customFunction();
+
   }, [width, height]);
 
   return (
