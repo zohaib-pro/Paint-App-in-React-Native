@@ -9,25 +9,25 @@ const Drawer = createDrawerNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Drawer.Navigator initialRouteName="Home">
+      <Drawer.Navigator initialRouteName="DrawGen">
         <Drawer.Screen
-          name="Home"
+          name="DrawGen"
           component={CanvasRender}
-          options={{ drawerLabel: 'Home' }}
+          options={{ drawerLabel: 'DrawGen' }}
         />
         <Drawer.Screen
-          name="Option1"
-          component={OptionScreen}
+          name="Save Painting"
+          component={CanvasRender}
           options={{ drawerLabel: 'Save Painting' }}
         />
         <Drawer.Screen
-          name="Option2"
-          component={OptionScreen}
+          name="AI Sketch"
+          component={CanvasRender}
           options={{ drawerLabel: 'AI Sketch' }}
         />
         <Drawer.Screen
-          name="Option3"
-          component={OptionScreen}
+          name="Shape"
+          component={CanvasRender}
           options={{ drawerLabel: 'Shape' }}
         />
         {/* Add more drawer options as needed */}
