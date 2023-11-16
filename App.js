@@ -63,7 +63,7 @@ export default function App() {
   const clearCanvas = () => {
     if (canvasRef.current) {
       const ctx = canvasRef.current.getContext('2d');
-      ctx.clearRect(0, 0, width, height);
+      ctx.clearRect(0, 0, width, height+100);
     }
   };
 
@@ -153,7 +153,7 @@ export default function App() {
       {
         // the following view will be used when you want to show something at top
       }
-      <View style={[styles.container, styles.absolute, styles.fullscreen ]}>
+      <View style={[styles.container, styles.absolute, styles.fullscreen, styles.center ]}>
         {
           isShowColorPicker ? (<View style={[styles.red, styles.card, { width: "80%", height: "70%" }]}>
             <ColorPicker
@@ -175,7 +175,7 @@ export default function App() {
       
       <View style={[styles.container, styles.absolute, styles.fullscreen, styles.topbarSpace]}>
         <View style={[styles.center, styles.center, styles.horizontal, { height: 50, backgroundColor: '#D3D3D3' }]}>
-        <SideMenu onclear={()=>{clearCanvas()}}/>
+        <SideMenu onclear={()=>{clearCanvas();undoStack.current.clear()}}/>
           <View style={[styles.center]}>
             <Text style={{ color: 'grey' }}>size: {strokeSize.toFixed(1)}</Text>
             <Slider
