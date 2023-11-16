@@ -44,7 +44,11 @@ const styles = StyleSheet.create({
         shadowRadius: 3,
         elevation: 50,
         shadowColor: '#171717'
-      },
+    },
+    
+    topbarSpace: {
+        marginTop: 35
+    }
 });
 
 export default styles;

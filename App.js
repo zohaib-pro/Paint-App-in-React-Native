@@ -124,7 +124,7 @@ export default function App() {
   useEffect(() => {
     if (canvasRef.current) {
       canvasRef.current.width = width;
-      canvasRef.current.height = height;
+      canvasRef.current.height = height+100;
     }
 
   }, [width, height]);
@@ -148,14 +148,12 @@ export default function App() {
           ref={canvasRef}
         />
 
-
-        <SideMenu />
       </View>
 
       {
         // the following view will be used when you want to show something at top
       }
-      <View style={[styles.container, styles.absolute, styles.fullscreen, styles.center]}>
+      <View style={[styles.container, styles.absolute, styles.fullscreen ]}>
         {
           isShowColorPicker ? (<View style={[styles.red, styles.card, { width: "80%", height: "70%" }]}>
             <ColorPicker
@@ -174,8 +172,10 @@ export default function App() {
           </View>) : null
         }
       </View>
-      <View style={[styles.container, styles.absolute, styles.fullscreen, styles.flexEnd]}>
+      
+      <View style={[styles.container, styles.absolute, styles.fullscreen, styles.topbarSpace]}>
         <View style={[styles.center, styles.center, styles.horizontal, { height: 50, backgroundColor: '#D3D3D3' }]}>
+        <SideMenu onclear={()=>{clearCanvas()}}/>
           <View style={[styles.center]}>
             <Text style={{ color: 'grey' }}>size: {strokeSize.toFixed(1)}</Text>
             <Slider
@@ -201,6 +201,7 @@ export default function App() {
           />
         </View>
       </View>
+      
     </SafeAreaView>
   );
 }
