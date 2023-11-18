@@ -4,14 +4,14 @@ import Canvas from 'react-native-canvas';
 import ColorPicker from 'react-native-wheel-color-picker';
 
 //Custom Components
-import styles from './utils/styles';
-import ColorIndicator from './components/ColorIndicator';
-import Stack from './utils/Stack';
+import styles from '../utils/styles';
+import ColorIndicator from '../components/ColorIndicator';
+import Stack from '../utils/Stack';
 import Slider from '@react-native-community/slider';
-import Space from './components/Space';
+import Space from '../components/Space';
 
 // Import the SideMenu
-import SideMenu from './SideMenu';
+import SideMenu from '../components/SideMenu';
 
 export default function CanvasRender({ navigation }) {
   const viewRef = useRef(null);

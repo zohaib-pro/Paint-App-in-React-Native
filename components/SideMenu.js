@@ -6,7 +6,7 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 
-import { firebase } from './config';
+import { firebase } from '../config';
 const SideBarComponent = ({navigation, onclear}) => {
 
 const auth = firebase.auth();
@@ -95,7 +95,7 @@ const firestore = firebase.firestore();
       <Animated.View style={[styles.animatedView, animatedStyles]}>
         <Image
           style={styles.logo}
-          source={require('./assets/genDrawLogo.jpeg')}
+          source={require('../assets/genDrawLogo.jpeg')}
         />
         <Text style={styles.welcomeText}>Hi, {userName} 👋</Text>
         <TouchableOpacity style={styles.menuButton} onPress={onclear}>

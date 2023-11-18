@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, Image } from 'react-native';
-import { firebase } from './config';
+import { firebase } from '../config';
 
 const auth = firebase.auth();
 
@@ -21,7 +21,7 @@ const LoginScreen = ({ navigation }) => {
     <View style={styles.container}>
       <Image
         style={styles.logo}
-        source={require('./assets/genDrawLogo.jpeg')}
+        source={require('../assets/genDrawLogo.jpeg')}
       />
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Sign in Today and Start using</Text>
