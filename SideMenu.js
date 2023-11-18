@@ -1,24 +1,16 @@
 import React, { useEffect, useState } from 'react';
-<<<<<<< HEAD
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-=======
 import { View, Text, StyleSheet, TouchableOpacity, Alert, Image } from 'react-native';
->>>>>>> forked-repo/main
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
 } from 'react-native-reanimated';
 
-<<<<<<< HEAD
-const SideBarComponent = ({onclear}) => {
-=======
 import { firebase } from './config';
+const SideBarComponent = ({navigation, onclear}) => {
+
 const auth = firebase.auth();
 const firestore = firebase.firestore();
-
-const SideBarComponent = ({navigation}) => {
-
   /*  */
   const [userName, setUserName] = useState('');
 
@@ -53,7 +45,6 @@ const SideBarComponent = ({navigation}) => {
   /*  */
 
 
->>>>>>> forked-repo/main
   const [isVisible, setIsVisible] = useState(false);
 
   // Animated value for controlling the left position
@@ -102,22 +93,12 @@ const SideBarComponent = ({navigation}) => {
       </TouchableOpacity>
 
       <Animated.View style={[styles.animatedView, animatedStyles]}>
-<<<<<<< HEAD
-        <TouchableOpacity style={styles.menuButton} onPress={onclear}>
-          <Text>Clear</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.menuButton} onPress={handleButton1}>
-          <Text>Save</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.menuButton} onPress={handleButton3}>
-          <Text>soon</Text>
-=======
         <Image
           style={styles.logo}
           source={require('./assets/genDrawLogo.jpeg')}
         />
         <Text style={styles.welcomeText}>Hi, {userName} 👋</Text>
-        <TouchableOpacity style={styles.menuButton} onPress={handleButton1}>
+        <TouchableOpacity style={styles.menuButton} onPress={onclear}>
           <Text>   Clear   </Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuButton} onPress={handleButton2}>
@@ -128,7 +109,6 @@ const SideBarComponent = ({navigation}) => {
         </TouchableOpacity>
         <TouchableOpacity style={[styles.menuButton, { backgroundColor: '#e74c3c', marginTop: 100 }] } onPress={handleLogout}>
           <Text>Logout</Text>
->>>>>>> forked-repo/main
         </TouchableOpacity>
       </Animated.View>
     </View>
@@ -151,20 +131,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-<<<<<<< HEAD
-    backgroundColor: 'lightgray'
-  },
-
-=======
     backgroundColor: '#eaf2ff',
   },
   button: {
-    marginTop: 20,
-    padding: 10,
     borderRadius: 5,
     color: '#fff',
   },
->>>>>>> forked-repo/main
   menuButton: {
     marginTop: 10,
     padding: 10,
