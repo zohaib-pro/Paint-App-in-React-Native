@@ -38,29 +38,36 @@ export default function CanvasRender({ navigation }) {
   const redoStackImg = useRef(new Stack());
   var path = [];  // always have the latest path
 
+  function printSizes(){
+    console.log(undoStackImg.current.size(), redoStackImg.current.size());
+  }
   const handleUndo = () => {
-    if (undoStack.current.size() > 0) {
-      console.log("before undo: " + undoStack.current.getItems().length);
-      const lastAction = undoStack.current.pop();
-      console.log("after undo: " + undoStack.current.getItems().length);
+    if (undoStackImg.current.size() > 0) {
+      //console.log("before undo: " + undoStack.current.getItems().length);
+      const lastAction = undoStackImg.current.pop();
+      //console.log("after undo: " + undoStack.current.getItems().length);
       // Push the undone action to the redo stack
-      redoStack.current.push(lastAction);
+      redoStackImg.current.push(lastAction);
 
       // Clear the canvas and redraw the remaining actions
       clearCanvas();
-      redrawFromStack(undoStack);
+      //redrawFromStack(undoStackImg);'
+      redrawState(undoStackImg.current.peek());
+      printSizes();
     }
   };
 
   const handleRedo = () => {
-    if (redoStack.current.size() > 0) {
-      const redoAction = redoStack.current.pop();
+    if (redoStackImg.current.size() > 0) {
+      const redoAction = redoStackImg.current.pop();
       // Push the redone action back to the undo stack
-      undoStack.current.push(redoAction);
+      undoStackImg.current.push(redoAction);
 
       // Clear the canvas and redraw the actions
       clearCanvas();
-      redrawFromStack(undoStack);
+      //redrawFromStack(undoStack);
+      redrawState(redoAction);
+      printSizes();
     }
   };
 
@@ -78,6 +85,20 @@ export default function CanvasRender({ navigation }) {
     // alert('saving...');
   }
 
+
+  const redrawState = (state)=>{
+    console.log('redrawing form history')
+    const ctx = canvasRef.current.getContext('2d');
+    const image = new CanvasImage(canvasRef.current);
+    //redoStackImg.current.push(undoStack.current.pop());
+    const imgSrc = state.replace(/"/g, '');
+    
+    image.src = imgSrc
+    image.addEventListener('load', () => {
+      ctx.drawImage(image, 0, 0, canvasRef.current.width, canvasRef.current.height);
+    });
+  }
+
   const redrawFromStack = (stack) => {
     // stack.current.getItems().forEach((action) => {
     //   const {path, color, strokeSize} = action;
@@ -88,16 +109,7 @@ export default function CanvasRender({ navigation }) {
     //   }
     // });
 
-   console.log('redrawing form cavnas')
-    const ctx = canvasRef.current.getContext('2d');
-    const image = new CanvasImage(canvasRef.current);
-    redoStackImg.current.push(undoStack.current.pop());
-    const imgSrc = undoStackImg.current.pop().replace(/"/g, '');
     
-    image.src = imgSrc
-    image.addEventListener('load', () => {
-      ctx.drawImage(image, 0, 0, canvasRef.current.width, canvasRef.current.height);
-    });
   };
 
   const handleTouchStart = (event) => {
@@ -201,7 +213,7 @@ export default function CanvasRender({ navigation }) {
           username={"test user"}
           btnList = {[
             {text: 'save', onPress: ()=>{saveCanvas()}},
-            {text: 'clear', onPress: ()=>{clearCanvas();undoStack.current.clear()}},
+            {text: 'clear', onPress: ()=>{clearCanvas();undoStack.current.clear();undoStackImg.current.clear();redoStackImg.current.clear();}},
             {text: 'AI Sketch', onPress: ()=>{setShowSketch(!isShowSketch)}},
            
           ]}
