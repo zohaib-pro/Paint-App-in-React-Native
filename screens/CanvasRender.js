@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { SafeAreaView, View, Dimensions, Image, Button, TouchableOpacity, Text } from 'react-native';
-import Canvas from 'react-native-canvas';
+import Canvas, {Image as CanvasImage} from 'react-native-canvas';
 import ColorPicker from 'react-native-wheel-color-picker';
 
 //Custom Components
@@ -16,6 +16,7 @@ import SideMenu from '../components/SideMenu';
 export default function CanvasRender({ navigation }) {
   const viewRef = useRef(null);
   const canvasRef = useRef(null);
+  //var ctx = null;
   const isDrawingRef = useRef(false);
 
   const [strokeSize, setStrokeSize] = useState(3);
@@ -32,6 +33,8 @@ export default function CanvasRender({ navigation }) {
 
   const undoStack = useRef(new Stack());
   const redoStack = useRef(new Stack());
+  const undoStackImg = useRef(new Stack());
+  const redoStackImg = useRef(new Stack());
   var path = [];  // always have the latest path
 
   const handleUndo = () => {
@@ -67,17 +70,32 @@ export default function CanvasRender({ navigation }) {
     }
   };
 
+  const saveCanvas = async ()=>{
+    const dataUrl = await canvasRef.current.toDataURL('image/png');
+    undoStackImg.current.push(dataUrl);
+    // console.log(dataUrl);
+    // alert('saving...');
+  }
+
   const redrawFromStack = (stack) => {
+    // stack.current.getItems().forEach((action) => {
+    //   const {path, color, strokeSize} = action;
+    //   for (let i = 0; i < path.length-1; i++) {
+    //     p1 = path[i];
+    //     p2 = path[i+1];
+    //     drawLineOnCanvas({x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, color, strokeSize});
+    //   }
+    // });
 
-    const paths = stack.current.getItems();
-
-    stack.current.getItems().forEach((action) => {
-      const {path, color, strokeSize} = action;
-      for (let i = 0; i < path.length-1; i++) {
-        p1 = path[i];
-        p2 = path[i+1];
-        drawLineOnCanvas({x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, color, strokeSize});
-      }
+   console.log('redrawing form cavnas')
+    const ctx = canvasRef.current.getContext('2d');
+    const image = new CanvasImage(canvasRef.current);
+    redoStackImg.current.push(undoStack.current.pop());
+    const imgSrc = undoStackImg.current.pop().replace(/"/g, '');
+    
+    image.src = imgSrc
+    image.addEventListener('load', () => {
+      ctx.drawImage(image, 0, 0, canvasRef.current.width, canvasRef.current.height);
     });
   };
 
@@ -107,6 +125,7 @@ export default function CanvasRender({ navigation }) {
   const handleTouchEnd = () => {
     isDrawingRef.current = false;
     undoStack.current.push({path, color, strokeSize});
+    saveCanvas();
   };
 
   const drawLineOnCanvas = (line) => {
@@ -117,8 +136,8 @@ export default function CanvasRender({ navigation }) {
       ctx.lineTo(line.x2, line.y2);
       ctx.strokeStyle = line.color;
       ctx.lineWidth = line.strokeSize;
-      ctx.stroke();
       ctx.closePath();
+      ctx.stroke();
     }
   };
   useEffect(() => {
@@ -139,10 +158,10 @@ export default function CanvasRender({ navigation }) {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        {/* <Image
-          source={require('./car_sketch.jpg')} // Replace with your image file path
+        <Image
+          source={require('../car_sketch.jpg')} // Replace with your image file path
           style={{ width: '100%', height: '100%', position: 'absolute' }}
-        /> */}
+        />
         <Canvas
           style={{ width: '100%', height: '100%', backgroundColor: 'transparent', position: 'absolute' }}
           ref={canvasRef}
@@ -175,7 +194,12 @@ export default function CanvasRender({ navigation }) {
       
       <View style={[styles.container, styles.absolute, styles.fullscreen, styles.topbarSpace]}>
         <View style={[styles.center, styles.center, styles.horizontal, { height: 50, backgroundColor: '#D3D3D3' }]}>
-        <SideMenu onclear={()=>{clearCanvas();undoStack.current.clear()}}/>
+        <SideMenu 
+          onclear={()=>{clearCanvas();undoStack.current.clear()}}
+          onsave={()=>{
+            saveCanvas();
+          }}
+          />
           <View style={[styles.center]}>
             <Text style={{ color: 'grey' }}>size: {strokeSize.toFixed(1)}</Text>
             <Slider

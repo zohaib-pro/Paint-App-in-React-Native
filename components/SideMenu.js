@@ -7,7 +7,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { firebase } from '../config';
-const SideBarComponent = ({navigation, onclear}) => {
+const SideBarComponent = ({navigation, onclear, onsave}) => {
 
 const auth = firebase.auth();
 const firestore = firebase.firestore();
@@ -71,21 +71,6 @@ const firestore = firebase.firestore();
     };
   });
 
-  const handleButton1 = () => {
-    // Functionality for Button 1
-    Alert.alert('Button 1 Pressed', 'Perform Button 1 Action');
-  };
-
-  const handleButton2 = () => {
-    // Functionality for Button 2
-    Alert.alert('Button 2 Pressed', 'Perform Button 2 Action');
-  };
-
-  const handleButton3 = () => {
-    // Functionality for Button 3
-    Alert.alert('Button 3 Pressed', 'Perform Button 3 Action');
-  };
-
   return (
     <View >
       <TouchableOpacity onPress={toggleVisibility} style={styles.button}>
@@ -101,10 +86,10 @@ const firestore = firebase.firestore();
         <TouchableOpacity style={styles.menuButton} onPress={onclear}>
           <Text>   Clear   </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.menuButton} onPress={handleButton2}>
+        <TouchableOpacity style={styles.menuButton} onPress={onsave}>
           <Text>   Save   </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.menuButton} onPress={handleButton3}>
+        <TouchableOpacity style={styles.menuButton} onPress={()=>{alert('comming soon!')}}>
           <Text>AI Sketch</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.menuButton, { backgroundColor: '#e74c3c', marginTop: 100 }] } onPress={handleLogout}>
