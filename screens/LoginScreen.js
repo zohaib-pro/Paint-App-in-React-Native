@@ -4,6 +4,7 @@ import { firebase } from '../config';
 
 const auth = firebase.auth();
 
+
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

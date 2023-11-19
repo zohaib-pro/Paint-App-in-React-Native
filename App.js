@@ -13,9 +13,10 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Canvas" component={CanvasRender} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="SignUp" component={SignUpScreen} />
-        <Stack.Screen name="Canvas" component={CanvasRender} />
+        
       </Stack.Navigator>
     </NavigationContainer>
   );

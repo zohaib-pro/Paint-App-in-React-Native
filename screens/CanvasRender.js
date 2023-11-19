@@ -20,6 +20,7 @@ export default function CanvasRender({ navigation }) {
   const isDrawingRef = useRef(false);
 
   const [strokeSize, setStrokeSize] = useState(3);
+  const [isShowSketch, setShowSketch] = useState(false);
   const [color, setColor] = useState('#ff0000');
   const [isShowColorPicker, setShowColorPicker] = useState(false);
 
@@ -158,10 +159,12 @@ export default function CanvasRender({ navigation }) {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <Image
+        {
+          isShowSketch? <Image
           source={require('../car_sketch.jpg')} // Replace with your image file path
           style={{ width: '100%', height: '100%', position: 'absolute' }}
-        />
+        />: ''
+        }
         <Canvas
           style={{ width: '100%', height: '100%', backgroundColor: 'transparent', position: 'absolute' }}
           ref={canvasRef}
@@ -195,10 +198,17 @@ export default function CanvasRender({ navigation }) {
       <View style={[styles.container, styles.absolute, styles.fullscreen, styles.topbarSpace]}>
         <View style={[styles.center, styles.center, styles.horizontal, { height: 50, backgroundColor: '#D3D3D3' }]}>
         <SideMenu 
-          onclear={()=>{clearCanvas();undoStack.current.clear()}}
-          onsave={()=>{
-            saveCanvas();
-          }}
+          username={"test user"}
+          btnList = {[
+            {text: 'save', onPress: ()=>{saveCanvas()}},
+            {text: 'clear', onPress: ()=>{clearCanvas();undoStack.current.clear()}},
+            {text: 'AI Sketch', onPress: ()=>{setShowSketch(!isShowSketch)}},
+           
+          ]}
+          // onclear={()=>{clearCanvas();undoStack.current.clear()}}
+          // onsave={()=>{
+          //   saveCanvas();
+          // }}
           />
           <View style={[styles.center]}>
             <Text style={{ color: 'grey' }}>size: {strokeSize.toFixed(1)}</Text>

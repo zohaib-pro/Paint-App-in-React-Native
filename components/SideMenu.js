@@ -7,41 +7,48 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { firebase } from '../config';
-const SideBarComponent = ({navigation, onclear, onsave}) => {
+import { wrap } from 'lodash';
+/**
+ * 
+ * @param {*} param0 an object containing navigation and a btnList
+ * the list format should be [{text, onPress}, ...]
+ * @returns 
+ */
+const SideBarComponent = ({ navigation, username, btnList }) => {
 
-const auth = firebase.auth();
-const firestore = firebase.firestore();
+  const auth = firebase.auth();
+  const firestore = firebase.firestore();
   /*  */
   const [userName, setUserName] = useState('');
 
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const user = auth.currentUser;
-        if (user) {
-          const userDoc = await firestore.collection('users').doc(user.uid).get();
-          const userData = userDoc.data();
-          if (userData) {
-            const { firstName, lastName } = userData;
-            setUserName(`${firstName} ${lastName}`);
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching user information:', error.message);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchUserInfo = async () => {
+  //     try {
+  //       const user = auth.currentUser;
+  //       if (user) {
+  //         const userDoc = await firestore.collection('users').doc(user.uid).get();
+  //         const userData = userDoc.data();
+  //         if (userData) {
+  //           const { firstName, lastName } = userData;
+  //           setUserName(`${firstName} ${lastName}`);
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching user information:', error.message);
+  //     }
+  //   };
 
-    fetchUserInfo();
-  }, []);
+  //   fetchUserInfo();
+  // }, []);
 
-  const handleLogout = async () => {
-    try {
-      await auth.signOut();
-      navigation.replace('Login');
-    } catch (error) {
-      console.error(error.message);
-    }
-  };
+  // const handleLogout = async () => {
+  //   try {
+  //     await auth.signOut();
+  //     navigation.replace('Login');
+  //   } catch (error) {
+  //     console.error(error.message);
+  //   }
+  // };
   /*  */
 
 
@@ -50,7 +57,7 @@ const firestore = firebase.firestore();
   // Animated value for controlling the left position
   const positionX = useSharedValue(0);
 
-  useEffect(()=>{
+  useEffect(() => {
     toggleVisibility();
   }, [])
 
@@ -82,8 +89,15 @@ const firestore = firebase.firestore();
           style={styles.logo}
           source={require('../assets/genDrawLogo.jpeg')}
         />
-        <Text style={styles.welcomeText}>Hi, {userName} 👋</Text>
-        <TouchableOpacity style={styles.menuButton} onPress={onclear}>
+        <Text style={styles.welcomeText}>Hi, {username} 👋</Text>
+        {
+          btnList.map((btn, index) => ( // Added the arrow function parentheses
+            <TouchableOpacity key={index} style={styles.menuButton} onPress={btn.onPress}>
+              <Text style={styles.btnText}>{btn.text}</Text> 
+            </TouchableOpacity>
+          ))
+        }
+        {/* <TouchableOpacity style={styles.menuButton} onPress={onclear}>
           <Text>   Clear   </Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuButton} onPress={onsave}>
@@ -94,7 +108,8 @@ const firestore = firebase.firestore();
         </TouchableOpacity>
         <TouchableOpacity style={[styles.menuButton, { backgroundColor: '#e74c3c', marginTop: 100 }] } onPress={handleLogout}>
           <Text>Logout</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+        
       </Animated.View>
     </View>
   );
@@ -105,19 +120,21 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'flex-start',
     margin: 25,
-    backgroundColor: 'pink'
+    backgroundColor: 'pink',
+    flexWrap: 'wrap'
   },
   animatedView: {
-    position:'absolute',
+    position: 'absolute',
     top: 100,
     width: 100,
     height: 450,
     borderWidth: 1,
     borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
+    padding: 10,
     backgroundColor: '#eaf2ff',
+    overflow: 'scroll',
   },
+
   button: {
     borderRadius: 5,
     color: '#fff',
@@ -135,7 +152,12 @@ const styles = StyleSheet.create({
   welcomeText: {
     fontSize: 13,
     fontWeight: 'bold',
+    textAlign: 'center'
   },
+
+  btnText: {
+    textAlign:'center'
+  }
 });
 
 export default SideBarComponent;
