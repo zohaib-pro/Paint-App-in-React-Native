@@ -16,14 +16,13 @@ import SideMenu from '../components/SideMenu';
 export default function CanvasRender({ navigation }) {
   const viewRef = useRef(null);
   const canvasRef = useRef(null);
-  //var ctx = null;
   const isDrawingRef = useRef(false);
 
   const [strokeSize, setStrokeSize] = useState(3);
   const [isShowSketch, setShowSketch] = useState(false);
   const [color, setColor] = useState('#ff0000');
   const [isShowColorPicker, setShowColorPicker] = useState(false);
-
+  var drawingAllowed = true;
   // Get screen dimensions
   const { width, height } = Dimensions.get('window');
 
@@ -113,6 +112,7 @@ export default function CanvasRender({ navigation }) {
   };
 
   const handleTouchStart = (event) => {
+    if (!drawingAllowed) return;
     isDrawingRef.current = true;
     const x = event.nativeEvent.locationX;
     const y = event.nativeEvent.locationY;
@@ -123,7 +123,7 @@ export default function CanvasRender({ navigation }) {
   };
 
   const handleTouchMove = (event) => {
-    if (!isDrawingRef.current) return;
+    if (!isDrawingRef.current && !drawingAllowed) return;
     const x = event.nativeEvent.locationX;
     const y = event.nativeEvent.locationY;
 
@@ -136,8 +136,9 @@ export default function CanvasRender({ navigation }) {
   };
 
   const handleTouchEnd = () => {
+    if (!drawingAllowed) return;
     isDrawingRef.current = false;
-    undoStack.current.push({path, color, strokeSize});
+    //undoStack.current.push({path, color, strokeSize});
     saveCanvas();
   };
 
@@ -162,7 +163,7 @@ export default function CanvasRender({ navigation }) {
   }, [width, height]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container]}>
 
       <View
         ref={viewRef}
@@ -210,11 +211,15 @@ export default function CanvasRender({ navigation }) {
       <View style={[styles.container, styles.absolute, styles.fullscreen, styles.topbarSpace]}>
         <View style={[styles.center, styles.center, styles.horizontal, { height: 50, backgroundColor: '#D3D3D3' }]}>
         <SideMenu 
+          navigation={navigation}
           username={"test user"}
+          onOpen={()=>{drawingAllowed = false}}
+          onClose={()=>{drawingAllowed = true}}
           btnList = {[
             {text: 'save', onPress: ()=>{saveCanvas()}},
             {text: 'clear', onPress: ()=>{clearCanvas();undoStack.current.clear();undoStackImg.current.clear();redoStackImg.current.clear();}},
             {text: 'AI Sketch', onPress: ()=>{setShowSketch(!isShowSketch)}},
+  
            
           ]}
           // onclear={()=>{clearCanvas();undoStack.current.clear()}}

@@ -7,14 +7,14 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { firebase } from '../config';
-import { wrap } from 'lodash';
+
 /**
  * 
  * @param {*} param0 an object containing navigation and a btnList
  * the list format should be [{text, onPress}, ...]
  * @returns 
  */
-const SideBarComponent = ({ navigation, username, btnList }) => {
+const SideBarComponent = ({ navigation, username, btnList, onOpen, onClose }) => {
 
   const auth = firebase.auth();
   const firestore = firebase.firestore();
@@ -64,6 +64,11 @@ const SideBarComponent = ({ navigation, username, btnList }) => {
   const toggleVisibility = () => {
     // Toggle visibility state
     setIsVisible(!isVisible);
+    
+    if (isVisible && onOpen)
+      onOpen();
+    else if (onClose)
+      onClose();
 
     // Animate the position based on visibility
     positionX.value = withSpring(isVisible ? 0 : -500, {}, (isFinished) => {
@@ -133,6 +138,7 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#eaf2ff',
     overflow: 'scroll',
+    
   },
 
   button: {
