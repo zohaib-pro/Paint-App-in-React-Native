@@ -16,35 +16,17 @@ const Stack = createStackNavigator();
 const App = () => {
 
   const temp = false;
-  const [user, setUser] = useState(null);
-
-  Database.getSignedInUser(userInfo=>{
-    setUser(userInfo)
-  });
-
-
+  var user = null;
   return (
     <NavigationContainer>
 
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-      
-      
-        {
-          user?
-          <>
-            <Stack.Screen name="Canvas" component={CanvasRender} />
-            <Stack.Screen name="Login" component={LoginScreen} />
-          </> 
-          :
-          <>
-            <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="Canvas" component={CanvasRender} />
-          </>
-          
-        }
+
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Canvas" component={CanvasRender} />
         <Stack.Screen name="Main" component={MainScreen} />
-       <Stack.Screen name="SignUp" component={SignUpScreen} />
-        
+        <Stack.Screen name="SignUp" component={SignUpScreen} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

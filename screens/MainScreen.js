@@ -3,7 +3,10 @@ import styles from "../utils/styles";
 import { Button, Text, TouchableOpacity, View } from "react-native";
 import { useState } from "react";
 
-export default function MainScreen({ navigation }) {
+export default function MainScreen({ navigation, route }) {
+
+    const userInfo = route.params;
+    console.log(route.params);
 
     const [drawings, setDrawings] = useState([
         {key: 1, title: "Drawing 1", path: "coming soon1"},
@@ -30,7 +33,7 @@ export default function MainScreen({ navigation }) {
                 data={drawings}
                 renderItem={({item})=>(
                     <TouchableOpacity style={[styles.card, styles.center, {minHeight: 100}]}
-                        onPress={()=>{navigation.navigate('Canvas')}}>
+                        onPress={()=>{navigation.navigate('Canvas', userInfo)}}>
                         <Text style={{color: 'red'}}>{item.title}</Text>
                     </TouchableOpacity>
                 )}

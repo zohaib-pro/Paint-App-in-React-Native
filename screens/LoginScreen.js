@@ -10,6 +10,15 @@ const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  Database.getSignedInUser(userInfo=>{
+    console.log(userInfo)
+    if (userInfo){
+      navigation.replace('Main', userInfo)
+    }
+
+    //setUser(userInfo)
+  });
+
      const fetchUserInfo = async () => {
       try {
         const user = auth.currentUser;

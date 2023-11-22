@@ -13,7 +13,10 @@ import Space from '../components/Space';
 // Import the SideMenu
 import SideMenu from '../components/SideMenu';
 
-export default function CanvasRender({ navigation }) {
+export default function CanvasRender({ navigation, route }) {
+
+  const {name} = route.params;
+
   const viewRef = useRef(null);
   const canvasRef = useRef(null);
   const isDrawingRef = useRef(false);
@@ -164,16 +167,17 @@ export default function CanvasRender({ navigation }) {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <Canvas
-            style={[styles.canvasDefault, { marginTop: 0 }]}
-            ref={canvasRef}
-          />
         {
           isShowSketch ? <Image
             source={require('../car_sketch.jpg')} // Replace with your image file path
             style={{ width: '100%', height: '100%', position: 'absolute' }}
           /> : ''
         }
+        <Canvas
+            style={[styles.canvasDefault, { marginTop: 0 }]}
+            ref={canvasRef}
+          />
+        
       </View>
 
       {
@@ -203,7 +207,7 @@ export default function CanvasRender({ navigation }) {
         <View style={[styles.center, styles.center, styles.horizontal, { height: 50, backgroundColor: '#D3D3D3' }]}>
           <SideMenu
             navigation={navigation}
-            username={"test user"}
+            username={name}
             onOpen={() => { drawingAllowed = false }}
             onClose={() => { drawingAllowed = true }}
             btnList={[
