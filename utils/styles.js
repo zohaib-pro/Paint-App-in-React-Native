@@ -36,9 +36,12 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         borderRadius: 8,
         padding: 10, 
-        width: '100%',
         marginVertical: 10,
-        shadowColor: '#171717',
+        margin: 10
+   
+    },
+
+    cardShadow:{
         shadowOffset: {width: -2, height: 4},
         shadowOpacity: 0.2,
         shadowRadius: 3,
@@ -48,6 +51,12 @@ const styles = StyleSheet.create({
     
     topbarSpace: {
         marginTop: 35
+    }, 
+    canvasDefault: {
+        width: '100%',
+        height: '100%', 
+        backgroundColor: 'transparent', 
+        position: 'absolute' 
     }
 });
 

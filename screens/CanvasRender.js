@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { SafeAreaView, View, Dimensions, Image, Button, TouchableOpacity, Text } from 'react-native';
-import Canvas, {Image as CanvasImage} from 'react-native-canvas';
+import Canvas, { Image as CanvasImage } from 'react-native-canvas';
 import ColorPicker from 'react-native-wheel-color-picker';
 
 //Custom Components
@@ -37,21 +37,20 @@ export default function CanvasRender({ navigation }) {
   const redoStackImg = useRef(new Stack());
   var path = [];  // always have the latest path
 
-  function printSizes(){
+  function printSizes() {
     console.log(undoStackImg.current.size(), redoStackImg.current.size());
   }
   const handleUndo = () => {
     if (undoStackImg.current.size() > 0) {
-      //console.log("before undo: " + undoStack.current.getItems().length);
       const lastAction = undoStackImg.current.pop();
-      //console.log("after undo: " + undoStack.current.getItems().length);
       // Push the undone action to the redo stack
       redoStackImg.current.push(lastAction);
-
       // Clear the canvas and redraw the remaining actions
       clearCanvas();
       //redrawFromStack(undoStackImg);'
-      redrawState(undoStackImg.current.peek());
+      const state = undoStackImg.current.peek();
+      if (state)
+        redrawState(state);
       printSizes();
     }
   };
@@ -73,43 +72,37 @@ export default function CanvasRender({ navigation }) {
   const clearCanvas = () => {
     if (canvasRef.current) {
       const ctx = canvasRef.current.getContext('2d');
-      ctx.clearRect(0, 0, width, height+100);
+      ctx.clearRect(0, 0, width, height + 100);
     }
   };
 
-  const saveCanvas = async ()=>{
+  const saveCanvas = async () => {
     const dataUrl = await canvasRef.current.toDataURL('image/png');
     undoStackImg.current.push(dataUrl);
-    // console.log(dataUrl);
-    // alert('saving...');
   }
 
 
-  const redrawState = (state)=>{
+  const redrawState = (state) => {
     console.log('redrawing form history')
     const ctx = canvasRef.current.getContext('2d');
     const image = new CanvasImage(canvasRef.current);
-    //redoStackImg.current.push(undoStack.current.pop());
-    const imgSrc = state.replace(/"/g, '');
-    
+    const imgSrc = state.replace(/"/g, ''); // the string contains quotes by default, therefore remove
     image.src = imgSrc
     image.addEventListener('load', () => {
       ctx.drawImage(image, 0, 0, canvasRef.current.width, canvasRef.current.height);
     });
   }
 
-  const redrawFromStack = (stack) => {
-    // stack.current.getItems().forEach((action) => {
-    //   const {path, color, strokeSize} = action;
-    //   for (let i = 0; i < path.length-1; i++) {
-    //     p1 = path[i];
-    //     p2 = path[i+1];
-    //     drawLineOnCanvas({x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, color, strokeSize});
-    //   }
-    // });
-
-    
-  };
+  // const redrawFromStack = (stack) => {
+  //   stack.current.getItems().forEach((action) => {
+  //     const {path, color, strokeSize} = action;
+  //     for (let i = 0; i < path.length-1; i++) {
+  //       p1 = path[i];
+  //       p2 = path[i+1];
+  //       drawLineOnCanvas({x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, color, strokeSize});
+  //     }
+  //   });    
+  // };
 
   const handleTouchStart = (event) => {
     if (!drawingAllowed) return;
@@ -117,7 +110,7 @@ export default function CanvasRender({ navigation }) {
     const x = event.nativeEvent.locationX;
     const y = event.nativeEvent.locationY;
     //console.log(`Touched at coordinates X: ${x}, Y: ${y}`);
-    const p = {x,y};
+    const p = { x, y };
     path = [];  //start a new path when new touch start detected
     path.push(p);
   };
@@ -127,11 +120,11 @@ export default function CanvasRender({ navigation }) {
     const x = event.nativeEvent.locationX;
     const y = event.nativeEvent.locationY;
 
-    //console.log(`Touched at coordinates X: ${x}, Y: ${y}`);
+    console.log(`Touched at coordinates X: ${x}, Y: ${y}`);
 
-    const p1 = path[path.length-1];
+    const p1 = path[path.length - 1];
     const p2 = { x, y };
-    drawLineOnCanvas({x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, color, strokeSize});
+    drawLineOnCanvas({ x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, color, strokeSize });
     path.push(p2);
   };
 
@@ -157,7 +150,7 @@ export default function CanvasRender({ navigation }) {
   useEffect(() => {
     if (canvasRef.current) {
       canvasRef.current.width = width;
-      canvasRef.current.height = height+100;
+      canvasRef.current.height = height + 100;
     }
 
   }, [width, height]);
@@ -172,23 +165,25 @@ export default function CanvasRender({ navigation }) {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        {
-          isShowSketch? <Image
-          source={require('../car_sketch.jpg')} // Replace with your image file path
-          style={{ width: '100%', height: '100%', position: 'absolute' }}
-        />: ''
-        }
         <Canvas
-          style={{ width: '100%', height: '100%', backgroundColor: 'transparent', position: 'absolute' }}
-          ref={canvasRef}
-        />
+            style={[styles.canvasDefault, { marginTop: 0 }]}
+            ref={canvasRef}
+          />
+        {
+          isShowSketch ? <Image
+            source={require('../car_sketch.jpg')} // Replace with your image file path
+            style={{ width: '100%', height: '100%', position: 'absolute' }}
+          /> : ''
+        }
+
+
 
       </View>
 
       {
         // the following view will be used when you want to show something at top
       }
-      <View style={[styles.container, styles.absolute, styles.fullscreen, styles.center ]}>
+      <View style={[styles.container, styles.absolute, styles.fullscreen, styles.center]}>
         {
           isShowColorPicker ? (<View style={[styles.red, styles.card, { width: "80%", height: "70%" }]}>
             <ColorPicker
@@ -207,21 +202,19 @@ export default function CanvasRender({ navigation }) {
           </View>) : null
         }
       </View>
-      
+
       <View style={[styles.container, styles.absolute, styles.fullscreen, styles.topbarSpace]}>
         <View style={[styles.center, styles.center, styles.horizontal, { height: 50, backgroundColor: '#D3D3D3' }]}>
-        <SideMenu 
-          navigation={navigation}
-          username={"test user"}
-          onOpen={()=>{drawingAllowed = false}}
-          onClose={()=>{drawingAllowed = true}}
-          btnList = {[
-            {text: 'save', onPress: ()=>{saveCanvas()}},
-            {text: 'clear', onPress: ()=>{clearCanvas();undoStack.current.clear();undoStackImg.current.clear();redoStackImg.current.clear();}},
-            {text: 'AI Sketch', onPress: ()=>{setShowSketch(!isShowSketch)}},
-  
-           
-          ]}
+          <SideMenu
+            navigation={navigation}
+            username={"test user"}
+            onOpen={() => { drawingAllowed = false }}
+            onClose={() => { drawingAllowed = true }}
+            btnList={[
+              { text: 'save', onPress: () => { saveCanvas() } },
+              { text: 'clear', onPress: () => { clearCanvas(); undoStackImg.current.clear(); redoStackImg.current.clear(); } },
+              { text: 'AI Sketch', onPress: () => { setShowSketch(!isShowSketch) } },
+            ]}
           // onclear={()=>{clearCanvas();undoStack.current.clear()}}
           // onsave={()=>{
           //   saveCanvas();
@@ -252,9 +245,7 @@ export default function CanvasRender({ navigation }) {
           />
         </View>
       </View>
-      
+
     </SafeAreaView>
   );
 }
-
-

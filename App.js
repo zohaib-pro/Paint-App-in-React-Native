@@ -8,6 +8,7 @@ import SignUpScreen from './screens/SignUpScreen';
 import CanvasRender from './screens/CanvasRender';
 
 import { firebase } from './config';
+import MainScreen from './screens/MainScreen';
 
 const Stack = createStackNavigator();
 
@@ -29,6 +30,7 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Main" component={MainScreen} />
         {
           temp?
           <>
