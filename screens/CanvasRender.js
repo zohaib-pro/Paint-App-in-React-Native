@@ -30,9 +30,6 @@ export default function CanvasRender({ navigation }) {
     setColor(color);
   };
 
-
-  const undoStack = useRef(new Stack());
-  const redoStack = useRef(new Stack());
   const undoStackImg = useRef(new Stack());
   const redoStackImg = useRef(new Stack());
   var path = [];  // always have the latest path
@@ -124,6 +121,8 @@ export default function CanvasRender({ navigation }) {
 
     const p1 = path[path.length - 1];
     const p2 = { x, y };
+    if (p2.y < 50)
+      return;
     drawLineOnCanvas({ x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, color, strokeSize });
     path.push(p2);
   };
@@ -160,7 +159,7 @@ export default function CanvasRender({ navigation }) {
 
       <View
         ref={viewRef}
-        style={{ width: '100%', height: '100%' }}
+        style={styles.container}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
@@ -175,9 +174,6 @@ export default function CanvasRender({ navigation }) {
             style={{ width: '100%', height: '100%', position: 'absolute' }}
           /> : ''
         }
-
-
-
       </View>
 
       {

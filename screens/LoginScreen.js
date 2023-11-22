@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, Image } from 'react-native';
 import { firebase } from '../config';
+import Database from '../utils/Database';
 
 const auth = firebase.auth();
 
@@ -9,9 +10,27 @@ const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+     const fetchUserInfo = async () => {
+      try {
+        const user = auth.currentUser;
+        if (user) {
+          const firestore = firebase.firestore();
+          const userDoc = await firestore.collection('users').doc(user.uid).get();
+          const userData = userDoc.data();
+          if (userData) {
+            return userData;
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching user information:', error.message);
+      }
+    };
+
   const handleLogin = async () => {
     try {
       await auth.signInWithEmailAndPassword(email, password);
+      const userInfo = await fetchUserInfo();
+      Database.signinUser(userInfo);
       navigation.navigate('Canvas');
     } catch (error) {
       Alert.alert('Error', error.message);

@@ -6,10 +6,10 @@ const auth = firebase.auth();
 const firestore = firebase.firestore();
 
 const SignUpScreen = ({ navigation }) => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPass, setCofirmPass] = useState('');
 
   const handleSignUp = async () => {
     try {
@@ -17,8 +17,7 @@ const SignUpScreen = ({ navigation }) => {
 
       // Add user information to Firestore
       await firestore.collection('users').doc(userCredential.user.uid).set({
-        firstName,
-        lastName,
+        name,
         email,
       });
 
@@ -44,14 +43,14 @@ const SignUpScreen = ({ navigation }) => {
       />
       <TextInput
         style={styles.input}
-        placeholder="First Name"
-        onChangeText={(text) => setFirstName(text)}
+        placeholder="Name"
+        onChangeText={(text) => setName(text)}
       />
-      <TextInput
+      {/* <TextInput
         style={styles.input}
         placeholder="Last Name"
         onChangeText={(text) => setLastName(text)}
-      />
+      /> */}
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -60,6 +59,12 @@ const SignUpScreen = ({ navigation }) => {
       <TextInput
         style={styles.input}
         placeholder="Password"
+        secureTextEntry
+        onChangeText={(text) => setPassword(text)}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Confirm Password"
         secureTextEntry
         onChangeText={(text) => setPassword(text)}
       />

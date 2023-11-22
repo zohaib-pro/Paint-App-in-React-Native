@@ -9,30 +9,28 @@ import CanvasRender from './screens/CanvasRender';
 
 import { firebase } from './config';
 import MainScreen from './screens/MainScreen';
+import Database from './utils/Database';
 
 const Stack = createStackNavigator();
 
 const App = () => {
 
-  const temp = true;
+  const temp = false;
   const [user, setUser] = useState(null);
 
-  
-  useEffect(() => {
-    const unsubscribe = firebase.auth().onAuthStateChanged((authUser) => {
-      setUser(authUser);
-    });
-
-    return () => unsubscribe();
-  }, []);
+  Database.getSignedInUser(userInfo=>{
+    setUser(userInfo)
+  });
 
 
   return (
     <NavigationContainer>
+
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Main" component={MainScreen} />
+      
+      
         {
-          temp?
+          user?
           <>
             <Stack.Screen name="Canvas" component={CanvasRender} />
             <Stack.Screen name="Login" component={LoginScreen} />
@@ -42,8 +40,10 @@ const App = () => {
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="Canvas" component={CanvasRender} />
           </>
+          
         }
-        <Stack.Screen name="SignUp" component={SignUpScreen} />
+        <Stack.Screen name="Main" component={MainScreen} />
+       <Stack.Screen name="SignUp" component={SignUpScreen} />
         
       </Stack.Navigator>
     </NavigationContainer>
