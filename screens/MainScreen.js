@@ -26,7 +26,6 @@ export default function MainScreen({ navigation, route }) {
         Database.signout(()=>{
             navigation.replace('Login')
         });
-        
     }
 
     return (

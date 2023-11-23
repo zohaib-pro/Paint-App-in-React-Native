@@ -29,7 +29,9 @@ const LoginScreen = ({ navigation }) => {
       }
     } catch (error) {
       console.error('Error fetching user information:', error.message);
+      return null;
     }
+    return null;
   };
 
   const handleLogin = async () => {
@@ -37,7 +39,7 @@ const LoginScreen = ({ navigation }) => {
       await auth.signInWithEmailAndPassword(email, password);
       const userInfo = await fetchUserInfo();
       Database.signinUser(userInfo);
-      navigation.navigate('Canvas');
+      navigation.navigate('Main', userInfo);
     } catch (error) {
       Alert.alert('Error', error.message);
     }
