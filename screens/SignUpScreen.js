@@ -4,6 +4,7 @@ import { firebase } from '../config';
 
 const auth = firebase.auth();
 const firestore = firebase.firestore();
+const realtime = firebase.database;
 
 const SignUpScreen = ({ navigation }) => {
   const [name, setName] = useState('');
@@ -13,17 +14,19 @@ const SignUpScreen = ({ navigation }) => {
 
   const handleSignUp = async () => {
     try {
+      console.log("started registering...");
       const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-
+      const uid = userCredential.user.uid;
+      console.log('user created: '+uid);
       // Add user information to Firestore
-      await firestore.collection('users').doc(userCredential.user.uid).set({
+      await firestore.collection('users').doc(uid).set({
         name,
         email,
       });
-
+      console.log('saved data')
       // Send verification email
-      await userCredential.user.sendEmailVerification();
-
+      //await userCredential.user.sendEmailVerification();
+      
       Alert.alert('Success', 'Account created successfully. Please verify your email.');
       navigation.navigate('Login');
     } catch (error) {

@@ -10,30 +10,27 @@ const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  Database.getSignedInUser(userInfo=>{
-    console.log(userInfo)
-    if (userInfo){
+  Database.getSignedInUser(userInfo => {
+    if (userInfo) {
       navigation.replace('Main', userInfo)
     }
-
-    //setUser(userInfo)
   });
 
-     const fetchUserInfo = async () => {
-      try {
-        const user = auth.currentUser;
-        if (user) {
-          const firestore = firebase.firestore();
-          const userDoc = await firestore.collection('users').doc(user.uid).get();
-          const userData = userDoc.data();
-          if (userData) {
-            return userData;
-          }
+  const fetchUserInfo = async () => {
+    try {
+      const user = auth.currentUser;
+      if (user) {
+        const firestore = firebase.firestore();
+        const userDoc = await firestore.collection('users').doc(user.uid).get();
+        const userData = userDoc.data();
+        if (userData) {
+          return userData;
         }
-      } catch (error) {
-        console.error('Error fetching user information:', error.message);
       }
-    };
+    } catch (error) {
+      console.error('Error fetching user information:', error.message);
+    }
+  };
 
   const handleLogin = async () => {
     try {
@@ -110,7 +107,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
   },
-  logo:{
+  logo: {
     width: 220,
     height: 220,
     marginVertical: 50,

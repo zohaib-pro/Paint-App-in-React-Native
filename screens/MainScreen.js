@@ -2,6 +2,7 @@ import { FlatList } from "react-native-gesture-handler";
 import styles from "../utils/styles";
 import { Button, Text, TouchableOpacity, View } from "react-native";
 import { useState } from "react";
+import Database from "../utils/Database";
 
 export default function MainScreen({ navigation, route }) {
 
@@ -21,20 +22,34 @@ export default function MainScreen({ navigation, route }) {
         setDrawings(newDrawings)
     }
 
+    const handleSignout = () =>{
+        Database.signout(()=>{
+            navigation.replace('Login')
+        });
+        
+    }
+
     return (
         <View style={[styles.container, styles.topbarSpace]}>
+            <View style={[styles.horizontal, styles.justifyCenter, {margin: 10}]}>
             <TouchableOpacity
-            style={[{backgroundColor: 'red', width: 30, alignContent: 'center', alignItems: 'center', right: 0}]}
+            style={[{}]}
             onPress={()=>{handleNewPress()}}>
                 <Text style={{fontSize: 30}}>+</Text>
             </TouchableOpacity>
+            <TouchableOpacity
+            style={[styles.center]}
+            onPress={()=>{handleSignout()}}>
+                <Text style={[styles.center, {fontSize: 20, textDecorationLine: 'underline'}]}>signout</Text>
+            </TouchableOpacity>
+            </View>
             <FlatList 
                 keyExtractor={item=>item.key.toString()}
                 data={drawings}
                 renderItem={({item})=>(
                     <TouchableOpacity style={[styles.card, styles.center, {minHeight: 100}]}
                         onPress={()=>{navigation.navigate('Canvas', userInfo)}}>
-                        <Text style={{color: 'red'}}>{item.title}</Text>
+                        <Text style={{color: 'black'}}>{item.title}</Text>
                     </TouchableOpacity>
                 )}
             />

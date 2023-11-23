@@ -8,6 +8,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
 
+    justifyCenter: {
+        justifyContent: 'space-between'
+    },
+
     center: {
         justifyContent: 'center',
         alignItems: 'center'

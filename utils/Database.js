@@ -46,7 +46,7 @@ class Database {
     }
 
     static async signout(onComplete) {
-        await AsyncStorage. removeItem("signedInUser");
+        await AsyncStorage.removeItem("signedInUser");
         onComplete();
     }
 
