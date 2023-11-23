@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
 
     card: {
         backgroundColor: 'white',
-        borderRadius: 8,
+        borderRadius: 15,
         padding: 10, 
         marginVertical: 10,
         margin: 10
@@ -61,7 +61,17 @@ const styles = StyleSheet.create({
         height: '100%', 
         backgroundColor: 'transparent', 
         position: 'absolute' 
-    }
+    },
+    menuButton: {
+        marginTop: 10,
+        padding: 8,
+        borderRadius: 5,
+        backgroundColor: 'lightblue',
+    },
+    logo: {
+        width: 60,
+        height: 60,
+    },
 });
 
 export default styles;

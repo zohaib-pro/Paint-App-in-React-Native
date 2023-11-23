@@ -203,8 +203,15 @@ export default function CanvasRender({ navigation, route }) {
         }
       </View>
 
-      <View style={[styles.container, styles.absolute, styles.fullscreen, styles.topbarSpace]}>
-        <View style={[styles.center, styles.center, styles.horizontal, { height: 50, backgroundColor: '#D3D3D3' }]}>
+      <View style={[styles.container, styles.absolute, styles.fullscreen]}>
+        <View style={[styles.center, styles.center, styles.horizontal, {
+            paddingHorizontal: 25,
+            backgroundColor: "#427D9D",
+            paddingBottom: 10,
+            paddingTop: 30,
+            borderBottomLeftRadius: 25,
+            borderBottomRightRadius: 25,
+          },]}>
           <SideMenu
             navigation={navigation}
             username={name}
@@ -221,7 +228,7 @@ export default function CanvasRender({ navigation, route }) {
           // }}
           />
           <View style={[styles.center]}>
-            <Text style={{ color: 'grey' }}>size: {strokeSize.toFixed(1)}</Text>
+            <Text style={{ color: 'black' }}>size: {strokeSize.toFixed(1)}</Text>
             <Slider
               style={{ width: 150, height: 30 }}
               minimumValue={1}
