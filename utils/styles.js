@@ -74,6 +74,26 @@ const styles = StyleSheet.create({
         marginTop: 20,
         marginLeft: 20,
     },
+    modal:{
+        backgroundColor:'#427d9d',
+        height:400,
+        width:300,
+        position:'absolute',
+        bottom:"30%",
+        left:'15%',
+        borderRadius:10,
+        alignItems:'center'
+        
+      },
+      prompt:{
+        width: 250,
+        height: 70, 
+        backgroundColor: 'white',
+        
+        padding:10,
+        borderRadius:5,
+        marginTop:5
+     },
 });
 
 export default styles;
