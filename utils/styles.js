@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
         position: 'absolute' 
     },
     menuButton: {
-        marginTop: 10,
+        marginTop: 40,
         padding: 8,
         borderRadius: 5,
         backgroundColor: 'lightblue',
@@ -71,6 +71,8 @@ const styles = StyleSheet.create({
     logo: {
         width: 60,
         height: 60,
+        marginTop: 20,
+        marginLeft: 20,
     },
 });
 

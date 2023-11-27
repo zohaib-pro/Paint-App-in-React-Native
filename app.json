@@ -4,10 +4,10 @@
     "slug": "graphics",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/genDrawLogo.jpeg",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/genDrawSplash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

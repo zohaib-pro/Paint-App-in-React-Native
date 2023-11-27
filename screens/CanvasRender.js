@@ -170,7 +170,7 @@ export default function CanvasRender({ navigation, route }) {
         {
           isShowSketch ? <Image
             source={require('../car_sketch.jpg')} // Replace with your image file path
-            style={{ width: '100%', height: '100%', position: 'absolute' }}
+            style={{ width: '100%', height: '100%', position: 'absolute', opacity: 0.3 }}
           /> : ''
         }
         <Canvas
