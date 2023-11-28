@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { SafeAreaView, View, Dimensions, Image, Button, TouchableOpacity, Text } from 'react-native';
+import { SafeAreaView, View, Dimensions, Image, Button,  ActivityIndicator ,TouchableOpacity, Text , Modal  , TextInput} from 'react-native';
 import Canvas, { Image as CanvasImage } from 'react-native-canvas';
 import ColorPicker from 'react-native-wheel-color-picker';
 
@@ -12,6 +12,10 @@ import Space from '../components/Space';
 
 // Import the SideMenu
 import SideMenu from '../components/SideMenu';
+
+// Import the Api
+import ApiConnection from '../utils/ApiConnection';
+import { Alert } from 'react-native';
 
 export default function CanvasRender({ navigation, route }) {
 
@@ -157,8 +161,91 @@ export default function CanvasRender({ navigation, route }) {
 
   }, [width, height]);
 
+  // ********* logic of Generating Image*******
+
+
+  // some state 
+  const [isModalVisible , setModalVisible ] = useState(false); // for visibility of the Modal
+  const [prompt , setPromt] = useState('') // for prompt
+  const [geneImage , setGenImage] = useState('') 
+  const [apiImage , setApiImage] = useState('')
+  const {loading,image_url,error,generate_images} = ApiConnection(); 
+
+  // function to generate the image
+  const genImage = ()=>{
+    if(prompt == ""){
+      Alert.alert("Prompt can not be Empty")
+    }else{
+      generate_images(prompt) // passing the prompt
+      setPromt('')
+    }
+    
+  }
+
+  useEffect(()=>{
+    setApiImage(image_url);
+  },[image_url]);
+
+  // function to move back
+  const moveBack = ()=>{
+    setGenImage(image_url)
+    setModalVisible(false)
+    console.log('set \n',geneImage.length)
+    setPromt('')
+    setShowSketch(true)
+    setApiImage('')
+  } 
+
+  const cross = () => {
+    setModalVisible(false);
+    setApiImage('')
+    setPromt('')
+  }
+
+
+  // ********* end of Generating Image Logic ******
+
+
   return (
     <SafeAreaView style={[styles.container]}>
+      <Modal
+      animationType='slide'
+      transparent = {true}
+      visible = {isModalVisible}
+      onRequestClose={()=> setModalVisible(false)}
+      
+      >
+        <View style={styles.modal}>
+           
+           <TouchableOpacity onPress={cross} style={[styles.button,{marginLeft :'90%'}]}>
+              <Text style={{ fontSize: 15, fontWeight: 'bold' }}>❌</Text>
+            </TouchableOpacity>
+          
+          <TextInput
+          placeholder='Enter Prompt'
+          style = {styles.prompt}
+          value={prompt}
+          onChangeText={setPromt}
+          />
+          <View style={{flexDirection:'column',width: "95%",alignItems:'center'}}>
+          <TouchableOpacity onPress={genImage} style={[styles.menuButton,{marginTop:5,width:'80%'}]}>
+            <Text style={{textAlign:'center'}}>Generate Image🪄</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={apiImage ? moveBack: null}
+          disabled = {apiImage ? false : true}  // diabled the move to canvas when image is not generated
+          style={[styles.menuButton,{marginTop:5,width:'80%',backgroundColor: apiImage ? "lightblue" : '#c4d4e3' }]}>
+            <Text style={{textAlign:'center'}}>Move Image to Canvas</Text>
+          </TouchableOpacity>
+          
+          </View>
+          {apiImage && <Image source={{ uri: apiImage }} style={{ width: "70%", height: '50%' , marginTop:10}} />}
+            {loading && <ActivityIndicator style={{ marginTop: 20 ,color:'white'}} />}
+            {error && <Text>Error: {error.message}</Text>}
+        </View>
+
+
+      </Modal>
+    
 
       <View
         ref={viewRef}
@@ -169,8 +256,8 @@ export default function CanvasRender({ navigation, route }) {
       >
         {
           isShowSketch ? <Image
-            source={require('../car_sketch.jpg')} // Replace with your image file path
-            style={{ width: '100%', height: '100%', position: 'absolute', opacity: 0.3 }}
+            source={{uri:geneImage}} // Replace with your image file path
+            style={{ width: 512, height:512 , position: 'absolute' }}
           /> : ''
         }
         <Canvas
@@ -220,7 +307,7 @@ export default function CanvasRender({ navigation, route }) {
             btnList={[
               { text: 'save', onPress: () => { saveCanvas() } },
               { text: 'clear', onPress: () => { clearCanvas(); undoStackImg.current.clear(); redoStackImg.current.clear(); } },
-              { text: 'AI Sketch', onPress: () => { setShowSketch(!isShowSketch) } },
+              { text: 'AI Sketch', onPress: () => { setModalVisible(true) } },
             ]}
           // onclear={()=>{clearCanvas();undoStack.current.clear()}}
           // onsave={()=>{
