@@ -15,43 +15,6 @@ import { firebase } from '../config';
  * @returns 
  */
 const SideBarComponent = ({ navigation, username, btnList, onOpen, onClose }) => {
-
-  const auth = firebase.auth();
-  const firestore = firebase.firestore();
-  /*  */
-  const [userName, setUserName] = useState('');
-
-  // useEffect(() => {
-  //   const fetchUserInfo = async () => {
-  //     try {
-  //       const user = auth.currentUser;
-  //       if (user) {
-  //         const userDoc = await firestore.collection('users').doc(user.uid).get();
-  //         const userData = userDoc.data();
-  //         if (userData) {
-  //           const { firstName, lastName } = userData;
-  //           setUserName(`${firstName} ${lastName}`);
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching user information:', error.message);
-  //     }
-  //   };
-
-  //   fetchUserInfo();
-  // }, []);
-
-  // const handleLogout = async () => {
-  //   try {
-  //     await auth.signOut();
-  //     navigation.replace('Login');
-  //   } catch (error) {
-  //     console.error(error.message);
-  //   }
-  // };
-  /*  */
-
-
   const [isVisible, setIsVisible] = useState(false);
 
   // Animated value for controlling the left position
@@ -92,7 +55,7 @@ const SideBarComponent = ({ navigation, username, btnList, onOpen, onClose }) =>
       <Animated.View style={[styles.animatedView, animatedStyles]}>
         <Image
           style={styles.logo}
-          source={require('../assets/genDrawLogo.jpeg')}
+          source={require('../assets/genDrawLogo.png')}
         />
         <Text style={styles.welcomeText}>Hi, {username} 👋</Text>
         {

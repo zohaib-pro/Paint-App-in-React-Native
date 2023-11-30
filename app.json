@@ -4,7 +4,7 @@
     "slug": "graphics",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/genDrawLogo.jpeg",
+    "icon": "./assets/genDrawLogo.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/genDrawSplash.png",

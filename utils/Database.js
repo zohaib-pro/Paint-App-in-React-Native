@@ -2,6 +2,36 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 class Database {
 
+    static async saveDrawing (drawing, userEmail = "test@gmail.com") {
+        const drawings = await this.getDrawings();
+        console.log('drawings: '+drawings)
+        const drawingExist = drawings.filter(item=>item.title === drawing.title)
+        if (drawingExist.length > 0) {
+            const prevDrawing = drawingExist[0]
+            prevDrawing.drawingImage = drawing.drawingImage
+        }else{
+            drawings.push({...drawing, userEmail})
+        }
+        
+        this.saveDrawings(drawings)
+    }
+
+    static async saveDrawings(drawings) {
+        AsyncStorage.setItem("drawings", JSON.stringify(drawings))
+    }
+
+    static async getDrawings (onSuccess) {
+        const drawings = await AsyncStorage.getItem("drawings");
+        const data = JSON.parse(drawings) || [];
+        if (onSuccess)
+            onSuccess(data)
+        return data;
+    }
+
+    static async deleteDrawings (){
+        AsyncStorage.removeItem('drawings')
+    }
+
     static async _getUsers() {
         const users = await AsyncStorage.getItem("users");
         return JSON.parse(users) || [];

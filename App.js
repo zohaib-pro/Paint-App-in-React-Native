@@ -8,8 +8,6 @@ import SignUpScreen from "./screens/SignUpScreen";
 import MainScreen from "./screens/MainScreen";
 import CanvasRender from "./screens/CanvasRender";
 
-import { firebase } from "./config";
-import Database from "./utils/Database";
 
 const Stack = createStackNavigator();
 

@@ -42,7 +42,7 @@ const SignUpScreen = ({ navigation }) => {
       </View>
       <Image
         style={styles.logo}
-        source={require('../assets/genDrawLogo.jpeg')}
+        source={require('../assets/genDrawLogo.png')}
       />
       <TextInput
         style={styles.input}
