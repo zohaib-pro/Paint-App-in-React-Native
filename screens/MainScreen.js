@@ -4,7 +4,6 @@ import { Button, Text, TouchableOpacity, View, Image } from "react-native";
 import { useState } from "react";
 import Database from "../utils/Database";
 
-import LinearGradient from 'react-native-linear-gradient';
 
 export default function MainScreen({ navigation, route }) {
   const userInfo = route.params;
