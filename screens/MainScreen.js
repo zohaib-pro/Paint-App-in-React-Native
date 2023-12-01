@@ -138,7 +138,7 @@ export default function MainScreen({ navigation, route }) {
                     { marginLeft: 20, marginRight: 20 },
                     selectedItemIds.includes(item.title) ? styles.cardSelected : {}
                   ]}
-                  onPress={() => { startDrawing(item) }}
+                  onPress={() => { selectedItemIds.length == 0? startDrawing(item): handleLongPress(item.title) }}
                   onLongPress={() => { handleLongPress(item.title) }}
                 >
                   {/* Image on the left */}
