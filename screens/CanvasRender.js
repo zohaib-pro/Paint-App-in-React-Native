@@ -17,6 +17,7 @@ import SideMenu from '../components/SideMenu';
 import ApiConnection from '../utils/ApiConnection';
 import { Alert } from 'react-native';
 import Database from '../utils/Database';
+import { DateHandler } from '../utils/DateHandler';
 
 export default function CanvasRender({ navigation, route}) {
 
@@ -88,8 +89,11 @@ export default function CanvasRender({ navigation, route}) {
   }
 
   const saveDrawing = async ()=>{
+    const dateHandler = new DateHandler()
+    //console.log('saving at: '+dateHandler.getFormatedDateTime())
     const drawingImage = undoStackImg.current.peek().replace(/"/g, '');
     drawing.drawingImage = drawingImage;
+    drawing.datetime = dateHandler.getMillis()
     await Database.saveDrawing(drawing, image_url)
     alert('drawing saved');
   }
@@ -309,6 +313,7 @@ export default function CanvasRender({ navigation, route}) {
         <View style = {[styles.primaryTopbar, styles.center]}>
         <View style={[styles.center, styles.center, styles.horizontal]}>
           <SideMenu
+            style={[styles.menuButton, {marginTop: 0, height: 'auto'}]}
             navigation={navigation}
             username={name}
             onOpen={() => { drawingAllowed = false }}

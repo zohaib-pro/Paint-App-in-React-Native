@@ -4,13 +4,14 @@ class Database {
 
     static async saveDrawing (drawing, userEmail = "test@gmail.com") {
         const drawings = await this.getDrawings();
-        console.log('drawings: '+drawings)
         const drawingExist = drawings.filter(item=>item.title === drawing.title)
+        
         if (drawingExist.length > 0) {
             const prevDrawing = drawingExist[0]
             prevDrawing.drawingImage = drawing.drawingImage
+            prevDrawing.sketchImage = drawing.sketchImage
         }else{
-            drawings.push({...drawing, userEmail})
+            drawings.push({...drawing,  userEmail})
         }
         
         this.saveDrawings(drawings)
@@ -28,8 +29,11 @@ class Database {
         return data;
     }
 
-    static async deleteDrawings (){
-        AsyncStorage.removeItem('drawings')
+    static async deleteDrawings (idList) {
+        const drawings = await this.getDrawings()
+        const filteredDrawings = drawings.filter(item=>!idList.includes(item.title))
+        console.log(filteredDrawings.map(item=>item.title))
+        await this.saveDrawings(filteredDrawings)
     }
 
     static async _getUsers() {

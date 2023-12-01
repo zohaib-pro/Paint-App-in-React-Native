@@ -1,11 +1,13 @@
 import { FlatList } from "react-native-gesture-handler";
 import styles from "../utils/styles";
-import { Button, Text, TouchableOpacity, View, Image, Modal, TextInput } from "react-native";
+import { Text, TouchableOpacity, View, Image, Modal, TextInput } from "react-native";
 import { useEffect, useState } from "react";
 import Database from "../utils/Database";
 import { useIsFocused } from "@react-navigation/native";
 import Space from "../components/Space";
-
+import { DateHandler } from "../utils/DateHandler";
+import SideMenu from '../components/SideMenu';
+import Button from "../components/Button";
 
 export default function MainScreen({ navigation, route }) {
   const userInfo = route.params;
@@ -15,7 +17,7 @@ export default function MainScreen({ navigation, route }) {
   const [prompt, setPromt] = useState('')
   const [isModalVisible, setModalVisible] = useState(false);
 
-  const isFocused = useIsFocused();  
+  const isFocused = useIsFocused();
 
   const [drawings, setDrawings] = useState(
     [
@@ -27,21 +29,20 @@ export default function MainScreen({ navigation, route }) {
     refreshDrawings()
   }, [])
 
-  useEffect(()=>{
+  useEffect(() => {
     refreshDrawings()
   }, [isFocused])
 
 
-  const refreshDrawings = ()=>{
-    Database.getDrawings((data) => {setDrawings(data) }) 
+  const refreshDrawings = () => {
+    Database.getDrawings((data) => { setDrawings(data) })
   }
 
-  const startDrawing = (drawing)=>{
-    navigation.navigate("Canvas", {...userInfo, drawing})
+  const startDrawing = (drawing) => {
+    //console.log(drawing)
+    navigation.navigate("Canvas", { ...userInfo, drawing })
   }
 
-
-  
   const handleNewPress = () => {
 
     if (prompt.length == 0) {
@@ -57,9 +58,29 @@ export default function MainScreen({ navigation, route }) {
   };
 
 
+  const handleDelete =  async(idListToDelete)=> {
+    await Database.deleteDrawings(idListToDelete); 
+    refreshDrawings()
+  }
+
   const handleSignout = () => {
     Database.signout(() => {
       navigation.replace("Login");
+    });
+  };
+
+
+  const [selectedItemIds, setSelectedItemIds] = useState([]);
+
+  const handleLongPress = (itemId) => {
+    setSelectedItemIds((prevSelectedIds) => {
+      if (prevSelectedIds.includes(itemId)) {
+        // If already selected, remove from the array
+        return prevSelectedIds.filter((id) => id !== itemId);
+      } else {
+        // If not selected, add to the array
+        return [...prevSelectedIds, itemId];
+      }
     });
   };
 
@@ -72,9 +93,9 @@ export default function MainScreen({ navigation, route }) {
         onRequestClose={() => setModalVisible(false)}>
 
         <View style={[styles.container, styles.absolute, styles.fullscreen, styles.center]}>
-          <View style={[styles.modal, styles.card, styles.cardShadow, {height: 'auto'}]}>
+          <View style={[styles.modal, styles.card, styles.cardShadow, { height: 'auto' }]}>
 
-            <TouchableOpacity onPress={()=>{setModalVisible(false)}} style={[styles.button, { marginLeft: '90%' }]}>
+            <TouchableOpacity onPress={() => { setModalVisible(false) }} style={[styles.button, { marginLeft: '90%' }]}>
               <Text style={{ fontSize: 15, fontWeight: 'bold' }}>❌</Text>
             </TouchableOpacity>
 
@@ -85,7 +106,7 @@ export default function MainScreen({ navigation, route }) {
               onChangeText={setPromt}
             />
             <View style={{ flexDirection: 'column', width: "95%", alignItems: 'center' }}>
-              <Space/>
+              <Space />
               <TouchableOpacity onPress={handleNewPress} style={[styles.menuButton, { marginTop: 5, width: '80%' }]}>
                 <Text style={{ textAlign: 'center' }}>Start Drawing 🪄</Text>
               </TouchableOpacity>
@@ -96,83 +117,114 @@ export default function MainScreen({ navigation, route }) {
 
       </Modal>
 
-      <View
-        style={[
-          styles.horizontal,
-          styles.justifyCenter,
-          styles.primaryTopbar,
-        ]}
-      >
-        <TouchableOpacity
-          style={[styles.menuButton, { backgroundColor: "lightgreen" }]}
-          onPress={() => {
-            setPromt('')
-            setModalVisible(true)
-            //Database.deleteDrawings(); alert('deleted'); 
-          }}
-        >
-          <Text style={{ fontSize: 20 }}>➕</Text>
-        </TouchableOpacity>
-        <Image
-          style={styles.logo}
-          source={require("../assets/genDrawLogo.png")}
-        />
-        <TouchableOpacity
-          style={[
-            styles.center,
-            styles.menuButton,
-            { backgroundColor: "lightpink" },
-          ]}
-          onPress={() => {
-            handleSignout();
-          }}
-        >
-          <Text style={[styles.center, { fontSize: 15, fontWeight: "bold" }]}>
-            Logout
-          </Text>
-        </TouchableOpacity>
-      </View>
-      <FlatList
-        //keyExtractor={(item) => item.key.toString()}
-        data={drawings}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={[
-              styles.card,
-              styles.horizontal,
-              styles.verticalCenter
-            ]}
-            onPress={()=>{startDrawing(item)}}
-          >
-            {/* Image on the left */}
-            <View style={{
-              width: 80,
-              height: 80,
-              marginRight: 10,
-              borderWidth: 2,
-              borderColor: "black",
-              borderRadius: 10,
-            }}>
-              <Image
-                style={[styles.fullscreen, styles.absolute]}
-                source={{ uri: item.drawingImage }}
+      {
+        drawings.length == 0 ?
+          <View style={[styles.container, styles.center]}>
+            <Text style={{ color: 'grey' }}>No Drawings Yet!</Text>
+            <Text style={{ color: 'grey' }}>Click '➕' icon to create new drawing</Text>
+          </View>
+          :
+          <View  style={[{ marginTop: 100 }, styles.container]}>
+            <FlatList
+              style={{flex: 1}}
+              keyExtractor={(item) => item.title}
+              data={drawings}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={[
+                    styles.card,
+                    styles.horizontal,
+                    styles.verticalCenter,
+                    { marginLeft: 20, marginRight: 20 },
+                    selectedItemIds.includes(item.title) ? styles.cardSelected : {}
+                  ]}
+                  onPress={() => { startDrawing(item) }}
+                  onLongPress={() => { handleLongPress(item.title) }}
+                >
+                  {/* Image on the left */}
+                  <View style={{
+                    width: 80,
+                    height: 80,
+                    marginRight: 10,
+                    borderWidth: 2,
+                    borderColor: "black",
+                    borderRadius: 10,
+                  }}>
+                    <Image
+                      style={[styles.fullscreen, styles.absolute]}
+                      source={{ uri: item.drawingImage }}
+                    />
+                    {
+                      item.sketchImage ?
+                        <Image
+                          style={[styles.fullscreen, styles.absolute]}
+                          source={{ uri: item.sketchImage }}
+                        /> :
+                        ''
+                    }
+                  </View>
+                  <View>
+                    <Text style={{ color: "black", fontSize: 18 }}>{item.title}</Text>
+                    <Text style={{ color: "gray", fontSize: 14 }}>{new DateHandler(item.datetime).getFormatedDateTime()}</Text>
+                  </View>
+
+                </TouchableOpacity>
+              )}
+            />
+            {
+              selectedItemIds.length != 0? 
+              <View style={[styles.horizontal, styles.justifyCenter, {padding: 20}]}>
+              <Button 
+                style={{backgroundColor: 'lightpink'}}
+                title="delete"
+                onPress={()=>{handleDelete(selectedItemIds)}}
               />
-              {
-                item.sketchImage ?
-                  <Image
-                    style={[styles.fullscreen, styles.absolute]}
-                    source={{ uri: item.sketchImage }}
-                  /> :
-                  ''
-              }
+              <Button 
+                title="cancel"
+                onPress={()=>{setSelectedItemIds([])}}
+              />
             </View>
-            <View>
-              <Text style={{ color: "black", fontSize: 18 }}>{item.title}</Text>
-              <Text style={{ color: "gray", fontSize: 14 }}>{item.path}</Text>
-            </View>
+            : 
+            ''
+            }
+          </View>
+      }
+
+      <View style={[styles.container, styles.fullscreen, styles.absolute]}>
+        <View
+          style={[
+            styles.horizontal,
+            styles.justifyCenter,
+            styles.primaryTopbar,
+          ]}
+        >
+          <SideMenu
+            style={[styles.menuButton]}
+            navigation={navigation}
+            username={userInfo.name}
+            btnList={[
+              { text: 'Delete All', onPress: () => { handleDelete(drawings.map(item=>item.title)) } },
+              { text: 'Logout', onPress: () => { handleSignout() } },
+            ]}
+          />
+
+          <Image
+            style={styles.logo}
+            source={require("../assets/genDrawLogo.png")}
+          />
+          <TouchableOpacity
+            style={[styles.menuButton, { backgroundColor: "lightgreen" }]}
+            onPress={() => {
+              setPromt('')
+              setModalVisible(true)
+              //Database.deleteDrawings(); alert('deleted'); 
+            }}
+          >
+            <Text style={{ fontSize: 20 }}>➕</Text>
           </TouchableOpacity>
-        )}
-      />
+        </View>
+      </View>
     </View>
+
   );
 }

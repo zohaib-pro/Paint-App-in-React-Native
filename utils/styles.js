@@ -76,6 +76,10 @@ const styles = StyleSheet.create({
         shadowColor: '#171717'
     },
 
+    cardSelected: {
+        backgroundColor: '#7fd48f'
+    },
+
     topbarSpace: {
         marginTop: 35
     },
