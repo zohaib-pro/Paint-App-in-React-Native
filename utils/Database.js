@@ -1,6 +1,14 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {firebase} from '../config'
 
 class Database {
+
+    
+    static async backup(drawings) {
+        const firestore = firebase.firestore();
+        const user = await this.getSignedInUser();
+        await firestore.collection('drawings').doc(user.uid).set({drawings: drawings})
+    }
 
     static async saveDrawing (drawing, userEmail = "test@gmail.com") {
         const drawings = await this.getDrawings();
@@ -21,7 +29,19 @@ class Database {
         AsyncStorage.setItem("drawings", JSON.stringify(drawings))
     }
 
-    static async getDrawings (onSuccess) {
+    static async getOnlineDrawings (uid, onSuccess=null) {
+        const firestore = firebase.firestore()
+        console.log("online drawings ->"+uid)
+        const drawings = await firestore.collection('drawings').doc(uid).get()
+
+        if (drawings && onSuccess)
+            onSuccess(drawings.drawings)
+        if (drawings)
+            return drawings.drawings;
+        return []
+    }
+
+    static async getDrawings ( onSuccess) {
         const drawings = await AsyncStorage.getItem("drawings");
         const data = JSON.parse(drawings) || [];
         if (onSuccess)
@@ -30,6 +50,10 @@ class Database {
     }
 
     static async deleteDrawings (idList) {
+        if (!idList) {
+            await AsyncStorage.removeItem('drawings')
+            return;
+        }
         const drawings = await this.getDrawings()
         const filteredDrawings = drawings.filter(item=>!idList.includes(item.title))
         console.log(filteredDrawings.map(item=>item.title))
@@ -76,7 +100,9 @@ class Database {
     static async getSignedInUser(onComplete) {
         const signedInUser = await AsyncStorage.getItem("signedInUser");
         const user = JSON.parse(signedInUser) || null;
-        onComplete(user);
+        if (onComplete)
+            onComplete(user);
+        return user;
     }
 
     static async signout(onComplete) {
@@ -90,6 +116,19 @@ class Database {
         users.push(userInfo);
         await AsyncStorage.setItem("signedInUser", JSON.stringify(userInfo));
         this._setUsers(users);
+    }
+
+    static async setSynced(onSuccess) {
+        await AsyncStorage.setItem("syncDrawings", JSON.stringify(userInfo))
+        if (onSuccess)
+            onSuccess()
+    }
+
+    static async isSynced(onSuccess) {
+        const result = await AsyncStorage.getItem("syncDrawings", JSON.stringify(userInfo))
+        if (onSuccess)
+            onSuccess(result)
+        return result;
     }
 }
 

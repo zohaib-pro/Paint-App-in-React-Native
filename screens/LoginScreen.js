@@ -23,6 +23,7 @@ const LoginScreen = ({ navigation }) => {
         const firestore = firebase.firestore();
         const userDoc = await firestore.collection('users').doc(user.uid).get();
         const userData = userDoc.data();
+        userData.uid = user.uid;
         if (userData) {
           return userData;
         }
@@ -37,8 +38,15 @@ const LoginScreen = ({ navigation }) => {
   const handleLogin = async () => {
     try {
       await auth.signInWithEmailAndPassword(email, password);
-      const userInfo = await fetchUserInfo();
-      Database.signinUser(userInfo);
+      var userInfo = await fetchUserInfo();
+      if (userInfo == null)
+        userInfo = {name: 'null'}
+      console.log(userInfo.uid)
+      await Database.signinUser(userInfo);
+      const onlineDrawings = await Database.getOnlineDrawings(userInfo.uid)
+      userInfo.drawings = onlineDrawings
+      console.log(onlineDrawings)
+      //const drawings
       navigation.navigate('Main', userInfo);
     } catch (error) {
       Alert.alert('Error', error.message);

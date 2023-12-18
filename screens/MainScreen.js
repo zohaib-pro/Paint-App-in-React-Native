@@ -8,6 +8,7 @@ import Space from "../components/Space";
 import { DateHandler } from "../utils/DateHandler";
 import SideMenu from '../components/SideMenu';
 import Button from "../components/Button";
+import ProgressDialog from "../components/ProgressDialog";
 
 export default function MainScreen({ navigation, route }) {
   const userInfo = route.params;
@@ -16,14 +17,11 @@ export default function MainScreen({ navigation, route }) {
 
   const [prompt, setPromt] = useState('')
   const [isModalVisible, setModalVisible] = useState(false);
+  const [loadingMsg, setLoadingMsg] = useState('')
 
   const isFocused = useIsFocused();
 
-  const [drawings, setDrawings] = useState(
-    [
-      //   { key: 1, title: "Drawing 1", path: "coming soon1" },
-    ]
-  );
+  const [drawings, setDrawings] = useState(userInfo.drawings || []);
 
   useEffect(() => {
     refreshDrawings()
@@ -63,8 +61,12 @@ export default function MainScreen({ navigation, route }) {
     refreshDrawings()
   }
 
-  const handleSignout = () => {
+  const handleSignout = async () => {
+    // delete drawings from local storage
+    // these will be fetched next time when user logs in
+    
     Database.signout(() => {
+      Database.deleteDrawings()
       navigation.replace("Login");
     });
   };
@@ -84,8 +86,16 @@ export default function MainScreen({ navigation, route }) {
     });
   };
 
+
+  const handleBackup = async () =>{
+    setLoadingMsg('Creating Online Backup...')
+    await Database.backup(drawings)
+    setLoadingMsg('');
+  }
+
   return (
     <View style={[styles.container, styles.secondaryBackground]}>
+      
       <Modal
         animationType='slide'
         transparent={true}
@@ -204,6 +214,7 @@ export default function MainScreen({ navigation, route }) {
             username={userInfo.name}
             btnList={[
               { text: 'Delete All', onPress: () => { handleDelete(drawings.map(item=>item.title)) } },
+              { text: 'Backup', onPress: handleBackup },
               { text: 'Logout', onPress: () => { handleSignout() } },
             ]}
           />
@@ -224,6 +235,7 @@ export default function MainScreen({ navigation, route }) {
           </TouchableOpacity>
         </View>
       </View>
+      {loadingMsg !='' && <ProgressDialog msg={loadingMsg}/>}
     </View>
 
   );
