@@ -12,7 +12,7 @@ import ProgressDialog from "../components/ProgressDialog";
 
 export default function MainScreen({ navigation, route }) {
   const userInfo = route.params;
-  console.log(route.params);
+  
 
 
   const [prompt, setPromt] = useState('')
@@ -21,7 +21,7 @@ export default function MainScreen({ navigation, route }) {
 
   const isFocused = useIsFocused();
 
-  const [drawings, setDrawings] = useState(userInfo.drawings || []);
+  const [drawings, setDrawings] = useState([]);
 
   useEffect(() => {
     refreshDrawings()
@@ -50,7 +50,7 @@ export default function MainScreen({ navigation, route }) {
     const id = drawings ? drawings.length + 1 : 0;
     setModalVisible(false)
     const drawing = { key: id, title: prompt, path: "coming soon4" }
-    console.log(drawing)
+    //console.log(drawing)
     startDrawing(drawing)
     //setDrawings(newDrawings);
   };

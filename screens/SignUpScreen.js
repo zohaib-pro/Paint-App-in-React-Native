@@ -1,35 +1,31 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, Image } from 'react-native';
-import { firebase } from '../config';
+import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, Image, ActivityIndicator } from 'react-native';
 
-const auth = firebase.auth();
-const firestore = firebase.firestore();
-const realtime = firebase.database;
+import {getFirestore} from 'firebase/firestore'
+import FirebaseHelper from '../utils/FirebaseHelper';
+
+//const auth = firebase.auth();
+const firestore = getFirestore();
 
 const SignUpScreen = ({ navigation }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPass, setCofirmPass] = useState('');
+  const [isLoading, setLoading] = useState(false)
 
+
+  const firebaseHelper = new FirebaseHelper()
   const handleSignUp = async () => {
     try {
-      console.log("started registering...");
-      const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-      const uid = userCredential.user.uid;
-      console.log('user created: '+uid);
-      // Add user information to Firestore
-      await firestore.collection('users').doc(uid).set({
-        name,
-        email,
-      });
-      console.log('saved data')
-      // Send verification email
-      //await userCredential.user.sendEmailVerification();
-      
+      setLoading(true)
+      await firebaseHelper.signUp(email, password, name)
+
       Alert.alert('Success', 'Account created successfully. Please verify your email.');
+      setLoading(false)
       navigation.navigate('Login');
     } catch (error) {
+      setLoading(false)
       Alert.alert('Error', error.message);
     }
   };
@@ -72,9 +68,11 @@ const SignUpScreen = ({ navigation }) => {
         onChangeText={(text) => setPassword(text)}
       />
       <TouchableOpacity
-        style={[styles.button, { backgroundColor: '#2ecc71' }]}
+        style={[styles.button, styles.horizontal, styles.center, { backgroundColor: '#2ecc71' }]}
         onPress={handleSignUp}
       >
+        {isLoading && <ActivityIndicator color={"white"} />}
+        {isLoading && <Text>{"  "}</Text>}
         <Text style={styles.buttonText}>Register</Text>
       </TouchableOpacity>
     </View>
@@ -88,6 +86,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
     backgroundColor: '#eaf2ff',
+  },
+
+  horizontal:{
+    flexDirection: 'row'
+  },
+
+  center:{
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   titleContainer: {
     alignItems: 'center',

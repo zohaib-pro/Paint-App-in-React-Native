@@ -1,13 +1,15 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {firebase} from '../config'
+import FirebaseHelper from "./FirebaseHelper";
 
 class Database {
 
     
     static async backup(drawings) {
-        const firestore = firebase.firestore();
+        const firebaseHelper = new FirebaseHelper()
         const user = await this.getSignedInUser();
-        await firestore.collection('drawings').doc(user.uid).set({drawings: drawings})
+        console.log(user.uid)
+        await firebaseHelper.setItem('drawings', ''+user.uid, {drawings: drawings})
     }
 
     static async saveDrawing (drawing, userEmail = "test@gmail.com") {
@@ -30,14 +32,14 @@ class Database {
     }
 
     static async getOnlineDrawings (uid, onSuccess=null) {
-        const firestore = firebase.firestore()
-        console.log("online drawings ->"+uid)
-        const drawings = await firestore.collection('drawings').doc(uid).get()
-
-        if (drawings && onSuccess)
-            onSuccess(drawings.drawings)
-        if (drawings)
-            return drawings.drawings;
+        // const firestore = firebase.firestore()
+        // console.log("online drawings ->"+uid)
+        // const drawings = await firestore.collection('drawings').doc(uid).get()
+        // console.log(drawings.data())
+        // if (drawings && onSuccess)
+        //     onSuccess(drawings.drawings)
+        // if (drawings)
+        //     return drawings.drawings;
         return []
     }
 
