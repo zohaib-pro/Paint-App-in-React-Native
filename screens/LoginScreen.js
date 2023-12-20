@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, Image } from 'react-native';
-import { firebase } from '../config';
+import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, Image, ActivityIndicator } from 'react-native';
 import Database from '../utils/Database';
+import FirebaseHelper from '../utils/FirebaseHelper';
 
-const auth = firebase.auth();
+
+
 
 
 const LoginScreen = ({ navigation }) => {
+  const [isLoading, setLoading] = useState(false)
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -16,39 +18,22 @@ const LoginScreen = ({ navigation }) => {
     }
   });
 
-  const fetchUserInfo = async () => {
-    try {
-      const user = auth.currentUser;
-      if (user) {
-        const firestore = firebase.firestore();
-        const userDoc = await firestore.collection('users').doc(user.uid).get();
-        const userData = userDoc.data();
-        userData.uid = user.uid;
-        if (userData) {
-          return userData;
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching user information:', error.message);
-      return null;
-    }
-    return null;
-  };
-
+  const firebaseHelper = new FirebaseHelper()
   const handleLogin = async () => {
     try {
-      await auth.signInWithEmailAndPassword(email, password);
-      var userInfo = await fetchUserInfo();
-      if (userInfo == null)
-        userInfo = {name: 'null'}
-      console.log(userInfo.uid)
+      setLoading(true)
+      const user = await firebaseHelper.signIn(email, password)
+      const userInfo = await firebaseHelper.getItem('users', user.uid)
+      userInfo.uid = user.uid
       await Database.signinUser(userInfo);
-      const onlineDrawings = await Database.getOnlineDrawings(userInfo.uid)
-      userInfo.drawings = onlineDrawings
-      console.log(onlineDrawings)
-      //const drawings
+      const item = await firebaseHelper.getItem('drawings', user.uid)
+      //save drawings in local database
+      if (item)
+        await Database.saveDrawings(item.drawings)
+      setLoading(false)
       navigation.navigate('Main', userInfo);
     } catch (error) {
+      setLoading(false)
       Alert.alert('Error', error.message);
     }
   };
@@ -75,9 +60,11 @@ const LoginScreen = ({ navigation }) => {
         onChangeText={(text) => setPassword(text)}
       />
       <TouchableOpacity
-        style={[styles.button, { backgroundColor: '#3498db', marginTop: 30 }]}
+        style={[styles.button, {flexDirection: 'row', justifyContent: 'center'}, { backgroundColor: '#3498db', marginTop: 30 }]}
         onPress={handleLogin}
       >
+        {isLoading && <ActivityIndicator color={"white"} />}
+        {isLoading && <Text>{"  "}</Text>}
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
       <TouchableOpacity
